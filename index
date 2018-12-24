@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    
+    <!-- WARNING: for iOS 7, remove the width=device-width and height=device-height attributes. See https://issues.apache.org/jira/browse/CB-4323 -->
+    <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height" />
+    
+    <title>Login</title>
+</head>
+<body>
+    <center>Email: <input id="email" type="email" placeholder="email@domain.com" /> <br/>
+    Password: <input id="password" type="password" placeholder="password" /> <br/>
+    <button id="loginButton">Login</button>
+    <button id="registerButton">Register</button>
+ Password:
+    <input type="file" name="foto" id="foto"/><br /><br />
+    <br/>
+    Message: <p id="status"></p>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            var url = "sua url.php";
+            
+            $("#loginButton").click(function(){
+
+        var email=$("#email").val();
+        var password=$("#password").val();
+        var dataString="email="+email+"&password="+password+"&login=";
+        if($.trim(email).length>0 & $.trim(password).length>0)
+        {
+            $.ajax({
+                type: "POST",
+                url: url,
+                data: dataString,
+                crossDomain: true,
+                cache: false,
+                beforeSend: function(){ $("#login").html('Connecting...');},
+                success: function(data){
+                    if(data=="success")
+                    {
+                        localStorage.login="true";
+                        localStorage.email=email;
+                        window.location.href = "index.html";
+                    }
+                    else if(data="failed")
+                    {
+                        alert("Login error");
+                        $("#login").html('Login');
+                    }
+                }
+            });
+        }return false;
+
+    });
+
+            $("#registerButton").click(function(){
+                var email= $.trim($("#email").val());
+                var password= $.trim($("#password").val());
+                 var foto = document.getElementById('foto');
+
+                $("#status").text("Creating New Account...");
+                var dataString="email="+email+"&password="+password+"&foto="+foto+"&register=";
+
+                $.ajax({
+                    type: "POST",crossDomain: true, cache: false,
+                    url: url,
+                    data: dataString,
+                    success: function(data){
+                        if(data == "success")
+                            $("#status").text("Registered success");
+                        else if( data == "exist")
+                            $("#status").text("Account is already there");
+                        else if(data == "error")
+                            $("#status").text("Register Failed");
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
